@@ -12,6 +12,7 @@ void interrupt_handler() {
 	SMS_setBGPaletteColor(0, line_counter);
 	SMS_setSpritePaletteColor(0, line_counter);
 	line_counter++;
+	if (line_counter > 5) line_counter = 1;
 }
 
 void main() {	
@@ -33,7 +34,6 @@ void main() {
 
 	while (1) {
 		SMS_waitForVBlank();
-		line_counter = 1;
 	}
 }
 
