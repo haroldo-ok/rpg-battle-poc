@@ -11,7 +11,6 @@ char line_counter;
 void interrupt_handler() {
 	SMS_setBGPaletteColor(0, line_counter);
 	SMS_setSpritePaletteColor(0, line_counter);
-	
 	line_counter++;
 }
 
@@ -22,15 +21,19 @@ void main() {
 
 	SMS_displayOff();
 
+	SMS_setBGPaletteColor(0, 0);
+	SMS_setSpritePaletteColor(0, 0);
+	
 	line_counter = 0;
 	SMS_setLineInterruptHandler(&interrupt_handler);
-	SMS_setLineCounter(60);
+	SMS_setLineCounter(32);
 	SMS_enableLineInterrupt();
 
 	SMS_displayOn();
 
 	while (1) {
 		SMS_waitForVBlank();
+		line_counter = 1;
 	}
 }
 
