@@ -3,8 +3,11 @@ OBJS := data.rel actor.rel rpg_battle.rel
 
 all: $(PRJNAME).sms
 
-data.c: data/*
+data.c: data/* data/player_1_tiles.psgcompr
 	folder2c data data
+
+data/player_1_tiles.psgcompr: data/img/player_1.png
+	BMP2Tile.exe data/img/player_1.png -noremovedupes -8x16 -palsms -fullpalette -savetiles data/player_1_tiles.psgcompr -savepalette data/player_1_palette.bin
 
 data/%.path: data/path/%.spline.json
 	node tool/convert_splines.js $< $@

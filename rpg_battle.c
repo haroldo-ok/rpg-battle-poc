@@ -9,8 +9,19 @@
 char line_counter;
 
 void interrupt_handler() {
-	SMS_setBGPaletteColor(0, line_counter);
-	SMS_setSpritePaletteColor(0, line_counter);
+//	SMS_setBGPaletteColor(0, line_counter);
+	switch (line_counter) {
+	case 1:
+		SMS_setSpritePaletteColor(0, 0);
+		SMS_setSpritePaletteColor(1, 0x0F);
+		break;
+		
+	case 2:
+		SMS_loadSpritePalette(player_1_palette_bin);
+		break;
+	}
+		
+	
 	line_counter++;
 	if (line_counter > 5) line_counter = 1;
 }
@@ -25,10 +36,24 @@ void main() {
 	SMS_setBGPaletteColor(0, 0);
 	SMS_setSpritePaletteColor(0, 0);
 	
+	SMS_loadPSGaidencompressedTiles(player_1_tiles_psgcompr, 2);
+
 	line_counter = 0;
 	SMS_setLineInterruptHandler(&interrupt_handler);
 	SMS_setLineCounter(32);
 	SMS_enableLineInterrupt();
+
+	SMS_initSprites();
+
+	SMS_addSprite(200, 32, 2);
+	SMS_addSprite(208, 32, 4);
+	SMS_addSprite(200, 48, 6);
+	SMS_addSprite(208, 48, 8);
+
+	SMS_addSprite(200, 64, 2);
+	
+	SMS_finalizeSprites();
+	SMS_copySpritestoSAT();
 
 	SMS_displayOn();
 
