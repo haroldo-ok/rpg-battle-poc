@@ -11,9 +11,6 @@ char line_counter;
 void interrupt_handler() {
 //	SMS_setBGPaletteColor(0, line_counter);
 	switch (line_counter) {
-	case 1:
-		break;
-		
 	case 2:
 		SMS_loadSpritePalette(player_1_palette_bin);
 		break;
@@ -21,6 +18,13 @@ void interrupt_handler() {
 	case 3:
 		SMS_loadSpritePalette(player_2_palette_bin);
 		break;
+
+	case 4:
+		SMS_loadSpritePalette(player_2_palette_bin);
+		break;
+		
+	default:
+		SMS_loadSpritePalette(player_3_palette_bin);
 	}
 		
 	
@@ -43,11 +47,11 @@ void main() {
 
 	SMS_displayOff();
 
-	SMS_setBGPaletteColor(0, 0);
-	SMS_setSpritePaletteColor(0, 0);
+	SMS_setBGPaletteColor(0, 0x04);
 	
 	SMS_loadPSGaidencompressedTiles(player_1_tiles_psgcompr, 2);
 	SMS_loadPSGaidencompressedTiles(player_2_tiles_psgcompr, 10);
+	SMS_loadPSGaidencompressedTiles(player_3_tiles_psgcompr, 18);
 
 	line_counter = 0;
 	SMS_setLineInterruptHandler(&interrupt_handler);
@@ -56,11 +60,10 @@ void main() {
 
 	SMS_initSprites();
 
-	draw_player(200, 32, 2);
-	draw_player(200, 64, 10);
-	
-	draw_player(200, 100, 2);
-	
+	draw_player(200, 64, 18);
+	draw_player(200, 100, 2);	
+	draw_player(200, 136, 10);	
+
 	SMS_finalizeSprites();
 	SMS_copySpritestoSAT();
 
@@ -72,7 +75,7 @@ void main() {
 }
 
 SMS_EMBED_SEGA_ROM_HEADER(9999,0); // code 9999 hopefully free, here this means 'homebrew'
-SMS_EMBED_SDSC_HEADER(0,1, 2022,02,28, "Haroldo-OK\\2022", "RPG Battle POC",
+SMS_EMBED_SDSC_HEADER(0,1, 2022,03,03, "Haroldo-OK\\2022", "RPG Battle POC",
   "A proof-of-concept RPG Battle System.\n"
   "Made for the SMS Power! Competition 2022 - https://www.smspower.org/forums/18879-Competitions2022DeadlineIs27thMarch\n"
   "Built using devkitSMS & SMSlib - https://github.com/sverx/devkitSMS");
