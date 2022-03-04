@@ -3,4 +3,4 @@ This is a proof-of-concept RPG battle system for the Sega Master System; origina
 
 
 
-* Player sprites: https://opengameart.org/content/js-actors-aeon-warriors-field-battle-sprites
+* Player sprites: https://www.spriters-resource.com/snes/ff5/
