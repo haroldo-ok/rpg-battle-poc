@@ -7,9 +7,15 @@
 #include "data.h"
 
 char line_counter;
+char color_index;
+
+char next_color_value;
+char next_color_index;
+char *next_palette;
 
 void interrupt_handler() {
-//	SMS_setBGPaletteColor(0, line_counter);
+	/*
+	SMS_setSpritePaletteColor(0, line_counter);
 	switch (line_counter) {
 	case 2:
 		SMS_loadSpritePalette(player_1_palette_bin);
@@ -26,10 +32,18 @@ void interrupt_handler() {
 	default:
 		SMS_loadSpritePalette(player_3_palette_bin);
 	}
-		
+	*/
 	
-	line_counter++;
-	if (line_counter > 4) line_counter = 0;
+	// Wait for a bit, so the CRAM dots don't appear at the right side.
+	for (char i = 1; i; i--);
+	
+	SMS_setSpritePaletteColor(next_color_index, next_color_value);
+	
+	next_color_index = color_index;
+	next_color_value = next_palette[color_index];
+	
+	color_index++;
+	color_index &= 0x0F;
 }
 
 void draw_player(char x, char y, char tile) {
@@ -54,8 +68,13 @@ void main() {
 	SMS_loadPSGaidencompressedTiles(player_3_tiles_psgcompr, 18);
 
 	line_counter = 0;
+	color_index = 0;
+	next_color_value = 0;
+	next_color_index = 0;
+	next_palette = player_1_palette_bin;
+
 	SMS_setLineInterruptHandler(&interrupt_handler);
-	SMS_setLineCounter(32);
+	SMS_setLineCounter(2);
 	SMS_enableLineInterrupt();
 
 	SMS_initSprites();
@@ -75,7 +94,7 @@ void main() {
 }
 
 SMS_EMBED_SEGA_ROM_HEADER(9999,0); // code 9999 hopefully free, here this means 'homebrew'
-SMS_EMBED_SDSC_HEADER(0,1, 2022,03,03, "Haroldo-OK\\2022", "RPG Battle POC",
+SMS_EMBED_SDSC_HEADER(0,2, 2022,03,06, "Haroldo-OK\\2022", "RPG Battle POC",
   "A proof-of-concept RPG Battle System.\n"
   "Built using devkitSMS & SMSlib - https://github.com/sverx/devkitSMS");
 
