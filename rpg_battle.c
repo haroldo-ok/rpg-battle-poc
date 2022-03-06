@@ -10,8 +10,13 @@ char line_counter;
 char color_index;
 
 char next_color_value;
-char next_color_index;
+char palette_number;
+char line_skip;
 char *next_palette;
+
+__sfr __at 0xBE VDPDataPort;
+
+inline void SMS_byte_to_VDP_data (unsigned char data);
 
 void interrupt_handler() {
 	/*
@@ -33,17 +38,46 @@ void interrupt_handler() {
 		SMS_loadSpritePalette(player_3_palette_bin);
 	}
 	*/
-	
-	// Wait for a bit, so the CRAM dots don't appear at the right side.
-	for (char i = 1; i; i--);
-	
-	SMS_setSpritePaletteColor(next_color_index, next_color_value);
-	
-	next_color_index = color_index;
-	next_color_value = next_palette[color_index];
-	
-	color_index++;
-	color_index &= 0x0F;
+		
+	if (color_index) {
+		VDPDataPort = next_color_value;
+		next_palette++;
+		color_index--;
+		next_color_value = *next_palette;
+		/*
+	} else if (line_skip) {
+		line_skip--;
+		*/
+	} else {
+		SMS_setAddr(0xC010);
+		color_index = 15;
+		//line_skip = 0;
+		
+		palette_number--;
+		if (!palette_number) {
+			palette_number = 3;
+			//line_skip = 120;
+		}
+		
+		/*
+		switch (palette_number) {
+		case 3:
+			next_palette = player_1_palette_bin;
+			break;
+			
+		case 2:
+			next_palette = player_1_palette_bin;
+			break;
+			
+		case 1:
+			next_palette = player_1_palette_bin;
+			break;
+		}
+		*/
+		next_palette = player_1_palette_bin;
+
+		next_color_value = *next_palette;
+	}
 }
 
 void draw_player(char x, char y, char tile) {
@@ -68,13 +102,14 @@ void main() {
 	SMS_loadPSGaidencompressedTiles(player_3_tiles_psgcompr, 18);
 
 	line_counter = 0;
-	color_index = 0;
+	color_index = 15;
 	next_color_value = 0;
-	next_color_index = 0;
+	palette_number = 3;
+	line_skip = 0;
 	next_palette = player_1_palette_bin;
 
 	SMS_setLineInterruptHandler(&interrupt_handler);
-	SMS_setLineCounter(2);
+	SMS_setLineCounter(1);
 	SMS_enableLineInterrupt();
 
 	SMS_initSprites();
